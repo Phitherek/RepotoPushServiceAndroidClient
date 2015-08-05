@@ -2,6 +2,7 @@ package me.phitherek.repotopushserviceandroidclient;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -47,7 +48,7 @@ public class RepotoPushServiceClientService extends Service {
         String defaultValue = "";
         String currentToken = sharedPrefs.getString(getString(R.string.shared_preferences_current_token_key), defaultValue);
         final String currentUsername = sharedPrefs.getString(getString(R.string.shared_preferences_current_username_key), defaultValue);
-        if(!currentToken.equals("")) {
+        if (!currentToken.equals("")) {
             CustomHttpAuthorizer authorizer = new CustomHttpAuthorizer("https://repotopushauth.deira.phitherek.me/endpoint", ctx);
             HashMap<String, String> additionalParams = new HashMap<String, String>();
             additionalParams.put("token", currentToken);
@@ -89,6 +90,16 @@ public class RepotoPushServiceClientService extends Service {
                         wakeLock.acquire();
                         Hashtable<String, String> memodata = gson.fromJson(message, (new Hashtable<String, String>()).getClass());
                         String memomsg = memodata.get("message");
+                        Integer notifId = NotificationIdDispenser.nextId();
+                        Intent cancelIntent = new Intent();
+                        cancelIntent.setAction(HelperService.ACTION_NOTIFICATION_CANCELLED);
+                        cancelIntent.putExtra(HelperService.EXTRA_NOTIFICATION_ID, notifId);
+                        cancelIntent.setClass(getApplicationContext(), HelperService.class);
+                        PendingIntent cancelPI = PendingIntent.getService(getApplicationContext(), notifId, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        Intent showIntent = new Intent(getApplicationContext(), ShowActivity.class);
+                        showIntent.setAction(ShowActivity.ACTION_SHOW_CONTENT);
+                        showIntent.putExtra(ShowActivity.EXTRA_PUSHMEMO_CONTENT, memomsg);
+                        PendingIntent showPI = PendingIntent.getActivity(getApplicationContext(), notifId, showIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                         NotificationManager NM;
                         NM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(getApplicationContext());
@@ -99,10 +110,13 @@ public class RepotoPushServiceClientService extends Service {
                         notifyBuilder.setLights(0xffffff00, 1000, 4000);
                         notifyBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
                         notifyBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(memomsg));
+                        notifyBuilder.setContentIntent(showPI);
+                        notifyBuilder.setDeleteIntent(cancelPI);
+                        notifyBuilder.setWhen(System.currentTimeMillis());
                         Notification notify = notifyBuilder.build();
-                        NM.notify(0, notify);
+                        NM.notify(notifId, notify);
                         wakeLock.release();
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         running = false;
                         e.printStackTrace();
                     }

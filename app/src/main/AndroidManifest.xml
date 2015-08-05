@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.phitherek.repotopushserviceandroidclient" >
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -33,10 +34,21 @@
             android:name=".LoggedInActivity"
             android:label="@string/title_activity_logged_in" >
         </activity>
-        <service android:name="me.phitherek.repotopushserviceandroidclient.RepotoPushServiceClientService"
-            android:exported="true"
-            android:enabled="true" >
+
+        <service
+            android:name=".RepotoPushServiceClientService"
+            android:enabled="true"
+            android:exported="true" >
         </service>
+        <service
+            android:name=".HelperService"
+            android:exported="false" >
+        </service>
+
+        <activity
+            android:name=".ShowActivity"
+            android:label="@string/title_activity_show" >
+        </activity>
     </application>
 
 </manifest>
