@@ -1,5 +1,6 @@
 package me.phitherek.repotopushserviceandroidclient;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -31,6 +32,7 @@ public class RepotoPushServiceClientService extends Service {
     private static Gson gson;
     private static Pusher pusher;
     private static Boolean running = false;
+    private static Context appContext = null;
 
     public RepotoPushServiceClientService() {
     }
@@ -43,6 +45,7 @@ public class RepotoPushServiceClientService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         gson = new Gson();
+        appContext = getApplicationContext();
         Context ctx = getApplicationContext();
         SharedPreferences sharedPrefs = ctx.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String defaultValue = "";
@@ -104,9 +107,9 @@ public class RepotoPushServiceClientService extends Service {
                         NM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(getApplicationContext());
                         notifyBuilder.setSmallIcon(R.drawable.notification_icon);
-                        notifyBuilder.setContentTitle("Received new PushMemo for " + currentUsername);
+                        notifyBuilder.setContentTitle(getString(R.string.received_new_pushmemo_for) + " " + currentUsername);
                         notifyBuilder.setContentText(memomsg);
-                        notifyBuilder.setTicker("Received new PushMemo for " + currentUsername + ": " + memomsg);
+                        notifyBuilder.setTicker(getString(R.string.received_new_pushmemo_for) + " " + currentUsername + ": " + memomsg);
                         notifyBuilder.setLights(0xffffff00, 1000, 4000);
                         notifyBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
                         notifyBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(memomsg));
@@ -146,6 +149,15 @@ public class RepotoPushServiceClientService extends Service {
     }
 
     public static Boolean getRunning() {
+        running = false;
+        if(appContext != null) {
+            ActivityManager manager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (RepotoPushServiceClientService.class.getName().equals(service.service.getClassName())) {
+                    running = true;
+                }
+            }
+        }
         return running;
     }
 }
