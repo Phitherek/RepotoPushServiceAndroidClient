@@ -234,7 +234,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             try {
                 Gson gson = new Gson();
-                String authUrls = "https://repotopushauth.deira.phitherek.me/login";
+                String authUrls = "https://repotopushauth.phitherek.me/login";
                 String query = "username=" + URLEncoder.encode(mUsername, "UTF-8") + "&password=" + URLEncoder.encode(mPassword, "UTF-8");
                 URL authUrl = new URL(authUrls);
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");

@@ -238,7 +238,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
             try {
                 Gson gson = new Gson();
-                String authUrls = "https://repotopushauth.deira.phitherek.me/register";
+                String authUrls = "https://repotopushauth.phitherek.me/register";
                 String query = "username=" + URLEncoder.encode(mUsername, "UTF-8") + "&password=" + URLEncoder.encode(mPassword, "UTF-8") + "&password_confirmation=" + URLEncoder.encode(mPasswordConfirmation, "UTF-8");
                 URL authUrl = new URL(authUrls);
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");

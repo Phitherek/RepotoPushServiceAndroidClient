@@ -52,7 +52,7 @@ public class RepotoPushServiceClientService extends Service {
         String currentToken = sharedPrefs.getString(getString(R.string.shared_preferences_current_token_key), defaultValue);
         final String currentUsername = sharedPrefs.getString(getString(R.string.shared_preferences_current_username_key), defaultValue);
         if (!currentToken.equals("")) {
-            CustomHttpAuthorizer authorizer = new CustomHttpAuthorizer("https://repotopushauth.deira.phitherek.me/endpoint", ctx);
+            CustomHttpAuthorizer authorizer = new CustomHttpAuthorizer("https://repotopushauth.phitherek.me/endpoint", ctx);
             HashMap<String, String> additionalParams = new HashMap<String, String>();
             additionalParams.put("token", currentToken);
             authorizer.setQueryStringParameters(additionalParams);

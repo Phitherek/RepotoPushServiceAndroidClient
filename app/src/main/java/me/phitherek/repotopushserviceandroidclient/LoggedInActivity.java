@@ -171,7 +171,7 @@ public class LoggedInActivity extends AppCompatActivity implements LoaderManager
         protected Boolean doInBackground(Void... params) {
             try {
                 Gson gson = new Gson();
-                String authUrls = "https://repotopushauth.deira.phitherek.me/logout";
+                String authUrls = "https://repotopushauth.phitherek.me/logout";
                 String defaultValue = "";
                 String currentToken = sharedPrefs.getString(getString(R.string.shared_preferences_current_token_key), defaultValue);
                 String query = "token=" + URLEncoder.encode(currentToken, "UTF-8");
